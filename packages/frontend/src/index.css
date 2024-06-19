@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
+}
+
+@media screen and (max-width: 510px) {
+  .firstLast {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.sideBarChatList::-webkit-scrollbar {
+  display: none;
+}
+
+.sideBarChatList {
+  scrollbar-width: none; /* Firefox */
+}

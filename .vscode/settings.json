@@ -1,0 +1,5 @@
+{
+  "editor.formatOnSave": true,
+  "cSpell.enableFiletypes": ["perl", "prisma"],
+  "cSpell.language": "en,en-US"
+}

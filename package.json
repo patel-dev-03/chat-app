@@ -1,0 +1,17 @@
+{
+  "name": "fluxbyte-chat",
+  "version": "1.0.0",
+  "description": "chat application",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "app:backend": "yarn workspace backend",
+    "app:frontend": "yarn workspace frontend"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "license": "MIT",
+  "repository": "git@github.com:hitesh3121/chat-application.git",
+  "author": "devpatel-03 <dev.fluxbyte@gmail.com>"
+}

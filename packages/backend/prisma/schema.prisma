@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatusEnum {
+  ONLINE
+  OFFLINE
+}
+
+enum UserSignUpSocial {
+  EMAIL
+  GOOGLE
+}
+
+enum MessageStatusEnum {
+  SENT
+  RECEIVED
+  DELIVERED
+  FAILED
+  DELETED
+  EDITED
+  DRAFT
+}
+
+enum MessageTypeEnum {
+  TEXT
+  IMAGE
+  VIDEO
+}
+
+enum ReceiverTypeEnum {
+  SINGLE
+  GROUP
+}
+
+enum RoleEnum {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  userId       String            @id @default(uuid())
+  clerkId      String            @unique
+  email        String            @unique
+  userName     String?           @unique
+  firstName    String?
+  lastName     String?
+  phoneNumber  String?
+  dateOfBirth  DateTime?
+  address      String?
+  userStatus   UserStatusEnum    @default(OFFLINE)
+  profilePhoto String?
+  social       UserSignUpSocial?
+  isVerified   Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  messagesSent        Message[]             @relation("sender")
+  messagesReceived    Message[]             @relation("singleUserChat")
+  groupsCreated       Group[]               @relation("creator")
+  groupMemberships    GroupMember[]
+}
+
+model Message {
+  messageId        String             @id @default(uuid())
+  senderId         String
+  singleReceiverId String?
+  groupReceiverId  String?
+  type             MessageTypeEnum?
+  status           MessageStatusEnum?
+  receiverType     ReceiverTypeEnum
+  readStatus       Boolean            @default(false)
+
+  messageData String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  sender      User     @relation("sender", fields: [senderId], references: [userId])
+  singleUser  User?    @relation("singleUserChat", fields: [singleReceiverId], references: [userId])
+  groupChat   Group?   @relation("groupChat", fields: [groupReceiverId], references: [groupId], onDelete: Cascade)
+
+}
+
+model Group {
+  groupId          String        @id @default(uuid())
+  groupName        String
+  description      String?
+  creatorId        String
+  createdAt        DateTime      @default(now())
+  updateAt         DateTime      @updatedAt
+  creator          User          @relation("creator", fields: [creatorId], references: [userId])
+  members          GroupMember[]
+  messagesReceived Message[]     @relation("groupChat")
+}
+
+model GroupMember {
+  groupMemberId String    @id @default(uuid())
+  groupId       String
+  userId        String
+  role          RoleEnum?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastSeen      DateTime?
+  group         Group     @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [userId])
+
+  @@unique(name: "groupIdUserId", [groupId, userId])
+}
+
